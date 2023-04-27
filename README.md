@@ -2,7 +2,7 @@
 
 A music streaming company, Sparkify, has decided that it is time to introduce more automation and monitoring to their data warehouse ETL pipelines and come to the conclusion that the best tool to achieve this is Apache Airflow.
 
-They have decided to bring you into the project and expect you to create high-grade data pipelines that are dynamic and built from reusable tasks, can be monitored, and allow easy backfills. They have also noted that data quality plays a big part when analyses are executed on top of the data warehouse and want to run tests against their datasets after the ETL steps have been executed to catch any discrepancies in the datasets.
+They have decided to create high-grade data pipelines that are dynamic and built from reusable tasks, can be monitored, and allow easy backfills. They have also noted that data quality plays a big part when analyses are executed on top of the data warehouse and want to run tests against their datasets after the ETL steps have been executed to catch any discrepancies in the datasets.
 
 The source data resides in S3 and needs to be processed in Sparkify's data warehouse in Amazon Redshift. The source datasets consist of JSON logs that tell about user activity in the application and JSON metadata about the songs the users listen to.
 
@@ -32,8 +32,8 @@ To run the ETL pipeline, follow the steps below:
 
 1. Clone the repository to your local machine.
 2. Install the required dependencies by running `pip install -r requirements.txt` in your terminal.
-3. Set your AWS credentials as environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
-4. Set your Redshift connection credentials as environment variables `REDSHIFT_CONN_ID`, `REDSHIFT_HOST`, `REDSHIFT_USER`, `REDSHIFT_PASSWORD`, and `REDSHIFT_PORT`.
+3. Set your AWS credentials as an Airflow connection called `aws_credentials`.
+4. Set your Redshift connection credentials as an Airflow connection called `redshift`.
 5. Run the Airflow webserver by running `airflow webserver` in your terminal.
 6. Run the Airflow scheduler by running `airflow scheduler` in another terminal.
 7. Access the Airflow UI at `http://localhost:8080` and enable the `sparkify_etl` DAG.
