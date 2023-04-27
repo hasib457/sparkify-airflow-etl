@@ -20,7 +20,7 @@ from operators import (
 default_args = {
     "owner": "Hassib",
     "depends_on_past": False,
-    "start_date": datetime(2018, 1, 1),
+    "start_date": datetime(2018, 11, 1),
     "retries": 3,
     "retry_delay": timedelta(minutes=5),
     "catchup": False,
@@ -87,7 +87,7 @@ load_user_dimension_table = LoadDimensionOperator(
     task_id="Load_user_dim_table",
     dag=dag,
     redshift_conn_id="redshift",
-    table="songplays",
+    table="users",
     sql_command=SqlQueries.user_table_insert,
 )
 
@@ -95,7 +95,7 @@ load_song_dimension_table = LoadDimensionOperator(
     task_id="Load_song_dim_table",
     dag=dag,
     redshift_conn_id="redshift",
-    table="songplays",
+    table="songs",
     sql_command=SqlQueries.song_table_insert,
 )
 
@@ -103,7 +103,7 @@ load_artist_dimension_table = LoadDimensionOperator(
     task_id="Load_artist_dim_table",
     dag=dag,
     redshift_conn_id="redshift",
-    table="songplays",
+    table="artists",
     sql_command=SqlQueries.artist_table_insert,
 )
 
@@ -111,7 +111,7 @@ load_time_dimension_table = LoadDimensionOperator(
     task_id="Load_time_dim_table",
     dag=dag,
     redshift_conn_id="redshift",
-    table="songplays",
+    table="time",
     sql_command=SqlQueries.time_table_insert,
 )
 

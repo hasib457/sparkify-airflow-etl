@@ -41,12 +41,14 @@ class LoadFactOperator(BaseOperator):
 
         if self.insert_mode == "truncate":
             truncate_statement = f"TRUNCATE TABLE {self.table};"
-            redshift_hook.run(truncate_statement)
+            redshift_hook.run(truncate_statement,  autocommit=True)
 
-        insert_statment = f"INSERT INTO {self.table} ({self.sql});"
-        success = redshift_hook.run(insert_statment)
-        if not success:
-            raise ValueError(
-                f"Failed to insert data in the {self.table} table with SQL statement:  { insert_statment}"
-            )
+        insert_statment = f"INSERT INTO {self.table} ({self.sql_command});"
+        success = redshift_hook.run(insert_statment, autocommit=True)
+        print(success)
+
+        # if not success:
+        #     raise ValueError(
+        #         f"Failed to insert data in the {self.table} table with SQL statement:  { insert_statment}"
+        #     )
         logging.info(f"Data inserted in {self.table} Table successfully in Redshift.")

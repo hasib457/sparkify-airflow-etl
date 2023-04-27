@@ -68,7 +68,7 @@ class StageToRedshiftOperator(BaseOperator):
 
         # Clear stage table
         self.log.info(f"Clearing {self.table} stage table")
-        redshift.run(f"DELETE FROM {self.table}")
+        redshift.run(f"TRUNCATE TABLE {self.table};", autocommit=True)
 
         # aws credintilas
         access_key = s3_hook.get_credentials().access_key
@@ -104,4 +104,4 @@ class StageToRedshiftOperator(BaseOperator):
 
         logging.info("Copying data from S3 to Redshift")
 
-        redshift.run(formated_copy_sql)
+        redshift.run(formated_copy_sql, autocommit=True)

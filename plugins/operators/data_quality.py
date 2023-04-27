@@ -34,8 +34,9 @@ class DataQualityOperator(BaseOperator):
 
         for table in self.tables:
             # Check that the table exists
-            table_exists = redshift_hook.run(f"SELECT 1 FROM {table} LIMIT 1")
-            if not table_exists:
+            table_check =f"SELECT EXISTS (SELECT 1 FROM pg_tables WHERE tablename = '{table}');"
+            table_exists = redshift_hook.get_records(table_check)
+            if not table_exists[0][0]:
                 raise ValueError(f"Data quality check failed. {table} does not exist")
 
             # Check that the table has rows
