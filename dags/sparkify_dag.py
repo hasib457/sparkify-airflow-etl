@@ -1,5 +1,3 @@
-# pylint:  disable-all
-
 import os
 from datetime import datetime, timedelta
 
@@ -118,8 +116,24 @@ load_time_dimension_table = LoadDimensionOperator(
 run_quality_checks = DataQualityOperator(
     task_id="Run_data_quality_checks",
     dag=dag,
+    dq_checks=[
+        {
+            "test_sql": "SELECT COUNT(*) FROM songs",
+            "expected_result": 0,
+            "comparison": ">",
+        },
+        {
+            "test_sql": "SELECT COUNT(*) FROM artists",
+            "expected_result": 0,
+            "comparison": ">",
+        },
+        {
+            "test_sql": "SELECT COUNT(*) FROM users WHERE level='free'",
+            "expected_result": 0,
+            "comparison": ">",
+        },
+    ],
     redshift_conn_id="redshift",
-    tables=["songplays", "artists", "songs", "users", "time"],
 )
 
 end_operator = EmptyOperator(task_id="Stop_execution", dag=dag)

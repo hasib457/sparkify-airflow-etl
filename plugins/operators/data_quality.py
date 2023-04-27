@@ -8,8 +8,8 @@ class DataQualityOperator(BaseOperator):
     """
     Performs data quality checks on a set of tables in Redshift.
 
-    :param tables: List of tables to check for data quality
-    :type tables: list[str]
+    :param dq_checks: List check statments for data quality
+    :type dq_checks: list[str]
     :param redshift_conn_id: ID of the Redshift connection to use
     :type redshift_conn_id: str
     """
@@ -18,8 +18,8 @@ class DataQualityOperator(BaseOperator):
 
     def __init__(
         self,
-        redshift_conn_id: str | None = "redshift",
-        tables: list | None = [],
+        dq_checks: list = [],
+        redshift_conn_id: str = "redshift",
         *args,
         **kwargs,
     ):
@@ -27,21 +27,35 @@ class DataQualityOperator(BaseOperator):
         super().__init__(*args, **kwargs)
         # Map params
         self.redshift_conn_id = redshift_conn_id
-        self.tables = tables
+        self.dq_checks = dq_checks
 
     def execute(self, context):
-        redshift_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
+        redshift_hook = PostgresHook(self.redshift_conn_id)
 
-        for table in self.tables:
-            # Check that the table exists
-            table_check =f"SELECT EXISTS (SELECT 1 FROM pg_tables WHERE tablename = '{table}');"
-            table_exists = redshift_hook.get_records(table_check)
-            if not table_exists[0][0]:
-                raise ValueError(f"Data quality check failed. {table} does not exist")
+        for i, dq_check in enumerate(self.dq_checks):
+            test_sql = dq_check["test_sql"]
+            expected_result = dq_check["expected_result"]
+            comparison = dq_check.get("comparison", "=")
 
-            # Check that the table has rows
-            records = redshift_hook.get_records(f"SELECT COUNT(*) FROM {table}")
-            if len(records) < 1 or len(records[0]) < 1:
+            records = redshift_hook.get_records(test_sql)
+            result = records[0][0]
+
+            if comparison == "=":
+                if result != expected_result:
+                    raise ValueError(
+                        f"Data quality check #{i} failed. Test query {test_sql} returned {result}, expected {expected_result}"
+                    )
+            elif comparison == ">":
+                if result <= expected_result:
+                    raise ValueError(
+                        f"Data quality check #{i} failed. Test query {test_sql} returned {result}, expected greater than {expected_result}"
+                    )
+            elif comparison == "<":
+                if result >= expected_result:
+                    raise ValueError(
+                        f"Data quality check #{i} failed. Test query {test_sql} returned {result}, expected less than {expected_result}"
+                    )
+            else:
                 raise ValueError(
-                    f"Data quality check failed. {table} returned no results"
+                    f"Invalid comparison operator '{comparison}' for data quality check #{i}."
                 )

@@ -24,28 +24,27 @@ class LoadFactOperator(BaseOperator):
                 redshift_conn_id: str = "redshift",
                 table: str ="",
                 sql_command: str = "",
-                insert_mode:str ="append",
                 *args, **kwargs):
 
         super().__init__(*args, **kwargs)
         self.redshift_conn_id = redshift_conn_id
         self.table =table
         self.sql_command = sql_command
-        self.insert_mode = insert_mode
+        # self.insert_mode = insert_mode
 
-        if self.insert_mode not in ["append", "truncate"]:
-            raise ValueError("Insert mode must be either 'append' or 'truncate'.")
+        # if self.insert_mode not in ["append", "truncate"]:
+        #     raise ValueError("Insert mode must be either 'append' or 'truncate'.")
 
     def execute(self, context):
         redshift_hook = PostgresHook(self.redshift_conn_id)
 
-        if self.insert_mode == "truncate":
-            truncate_statement = f"TRUNCATE TABLE {self.table};"
-            redshift_hook.run(truncate_statement,  autocommit=True)
+        # if self.insert_mode == "truncate":
+        #     truncate_statement = f"TRUNCATE TABLE {self.table};"
+        #     redshift_hook.run(truncate_statement,  autocommit=True)
 
         insert_statment = f"INSERT INTO {self.table} ({self.sql_command});"
         success = redshift_hook.run(insert_statment, autocommit=True)
-        print(success)
+        # print(success)
 
         # if not success:
         #     raise ValueError(
