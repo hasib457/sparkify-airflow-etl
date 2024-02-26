@@ -26,6 +26,14 @@ The project directory contains the following files:
         <img src="dag.png">
 </p>
 
+# Data Model
+In this project, we will use the star schema data model. The star schema is a multi-dimensional data model used to organize data in a database or data warehouse so that it is easy to understand and analyze and it's optimized for querying large data sets.
+
+<!-- ![](sparkifydb_erd.png) -->
+<p align="center">
+        <img src="sparkifydb_erd.png">
+</p>
+
 ## Running the ETL Pipeline
 
 To run the ETL pipeline, follow the steps below:
